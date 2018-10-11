@@ -3,8 +3,15 @@
 var Promise = require('./lib/promise');
 
 module.exports = function loadStylesheet(options) {
-  var stylesheet = document.createElement('link');
-  var container = options.container || document.head;
+  var container;
+  var stylesheet = document.querySelector('link[href="' + options.href + '"]');
+
+  if (stylesheet) {
+    return Promise.resolve(stylesheet);
+  }
+
+  stylesheet = document.createElement('link');
+  container = options.container || document.head;
 
   stylesheet.setAttribute('rel', 'stylesheet');
   stylesheet.setAttribute('type', 'text/css');

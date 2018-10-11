@@ -37,6 +37,8 @@ loadStylesheet({
 });
 ```
 
+Both methods will resolve immediately if the `script` or `link` element is already on the page.
+
 ## Development
 
 Run tests:

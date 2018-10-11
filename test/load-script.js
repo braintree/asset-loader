@@ -26,8 +26,18 @@ describe('loadScript', function () {
 
     expect(promise).to.be.an.instanceof(Promise);
 
-    return promise.then(function () {
+    return promise.then(function (script) {
+      expect(script).to.equal(this.fakeScriptTag);
       expect(this.fakeScriptTag.addEventListener).to.be.calledThrice;
+    }.bind(this));
+  });
+
+  it('resolves with the script if a script with the same src already exists on the page', function () {
+    this.sandbox.stub(document, 'querySelector').returns(this.fakeScriptTag);
+
+    return loadScript(this.options).then(function (script) {
+      expect(script).to.equal(this.fakeScriptTag);
+      expect(this.fakeScriptTag.addEventListener).to.not.be.called;
     }.bind(this));
   });
 

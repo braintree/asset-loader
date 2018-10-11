@@ -22,6 +22,22 @@ describe('loadStylesheet', function () {
     });
   });
 
+  it('returns a promise that resolves an existing stylesheet element if a link element exists on the page with with the same href', function () {
+    var fakeLink = {};
+
+    this.sandbox.stub(document, 'querySelector').returns(fakeLink);
+
+    return loadStylesheet({
+      id: 'stylesheet-id',
+      href: 'stylesheet-href',
+      container: this.fakeHead
+    }).then(function (link) {
+      expect(link).to.equal(fakeLink);
+      expect(this.fakeHead.appendChild).to.not.be.called;
+      expect(this.fakeHead.insertBefore).to.not.be.called;
+    }.bind(this));
+  });
+
   it('injects configured stylesheet', function () {
     var stylesheet;
 
