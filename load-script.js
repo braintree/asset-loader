@@ -3,11 +3,14 @@
 var Promise = require('./lib/promise');
 
 module.exports = function loadScript(options) {
-  var attrs, container;
-  var script = document.querySelector('script[src="' + options.src + '"]');
+  var attrs, container, script;
 
-  if (script) {
-    return Promise.resolve(script);
+  if (!options.forceScriptReload) {
+    script = document.querySelector('script[src="' + options.src + '"]');
+
+    if (script) {
+      return Promise.resolve(script);
+    }
   }
 
   script = document.createElement('script');

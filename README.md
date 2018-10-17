@@ -17,7 +17,12 @@ loadScript({
   id: 'id-to-give-script-tag', // optional
   dataAttribtues: { // optional
     foo: 'value' // adds data-foo="value" to script tag
-  }
+  },
+  // optional, by default the module will resolve with an existing script
+  // node if a script tag with the same src exists on the page, by setting
+  // this value to `true`, it will add the script to the page even if an
+  // identical script tag already exists on the page.
+  forceScriptReload: true
 }).then(function (script) {
   script; // a reference to the dom node
 }).catch(function (err) {

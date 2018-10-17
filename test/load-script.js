@@ -37,7 +37,17 @@ describe('loadScript', function () {
 
     return loadScript(this.options).then(function (script) {
       expect(script).to.equal(this.fakeScriptTag);
-      expect(this.fakeScriptTag.addEventListener).to.not.be.called;
+      expect(document.createElement).to.not.be.called;
+    }.bind(this));
+  });
+
+  it('can force a script reload', function () {
+    this.sandbox.stub(document, 'querySelector').returns({});
+    this.options.forceScriptReload = true;
+
+    return loadScript(this.options).then(function (script) {
+      expect(script).to.equal(this.fakeScriptTag);
+      expect(document.createElement).to.be.calledOnce;
     }.bind(this));
   });
 
