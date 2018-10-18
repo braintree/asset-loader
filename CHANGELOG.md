@@ -1,4 +1,4 @@
-# unreleased
+# 0.2.0
 
 * Add ability to force reload a script tag if it already exists on the page
 
