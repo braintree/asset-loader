@@ -1,3 +1,7 @@
+# unreleased
+
+* Set `loadScript` to cache the promise used to load the script to eliiminate a race condition where the script could be on the page, but not ready to use
+
 # 0.2.0
 
 * Add ability to force reload a script tag if it already exists on the page
