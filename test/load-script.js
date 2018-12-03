@@ -21,6 +21,10 @@ describe('loadScript', function () {
     this.sandbox.stub(document, 'createElement').returns(this.fakeScriptTag);
   });
 
+  afterEach(function () {
+    loadScript.clearCache();
+  });
+
   it('returns a promise that resolves when script has loaded', function () {
     var promise = loadScript(this.options);
 
@@ -32,12 +36,33 @@ describe('loadScript', function () {
     }.bind(this));
   });
 
-  it('resolves with the script if a script with the same src already exists on the page', function () {
-    this.sandbox.stub(document, 'querySelector').returns(this.fakeScriptTag);
+  it('resolves with the script if a script with the same options has already been loaded', function () {
+    var options = this.options;
 
-    return loadScript(this.options).then(function (script) {
+    return loadScript(options).then(function () {
+      document.createElement.resetHistory();
+
+      return loadScript(options);
+    }).then(function (script) {
       expect(script).to.equal(this.fakeScriptTag);
       expect(document.createElement).to.not.be.called;
+    }.bind(this));
+  });
+
+  it('adds new script to page if options differ on second load', function () {
+    var options = this.options;
+
+    return loadScript(options).then(function () {
+      document.createElement.resetHistory();
+      options.dataAttributes = {
+        'log-level': 'warn',
+        foo: 'bar'
+      };
+
+      return loadScript(options);
+    }).then(function (script) {
+      expect(script).to.equal(this.fakeScriptTag);
+      expect(document.createElement).to.be.calledOnce;
     }.bind(this));
   });
 

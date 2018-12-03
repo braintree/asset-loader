@@ -1,15 +1,17 @@
 'use strict';
 
 var Promise = require('./lib/promise');
+var scriptPromiseCache = {};
 
-module.exports = function loadScript(options) {
-  var attrs, container, script;
+function loadScript(options) {
+  var attrs, container, script, scriptLoadPromise;
+  var stringifiedOptions = JSON.stringify(options);
 
   if (!options.forceScriptReload) {
-    script = document.querySelector('script[src="' + options.src + '"]');
+    scriptLoadPromise = scriptPromiseCache[stringifiedOptions];
 
-    if (script) {
-      return Promise.resolve(script);
+    if (scriptLoadPromise) {
+      return scriptLoadPromise;
     }
   }
 
@@ -25,7 +27,7 @@ module.exports = function loadScript(options) {
     script.setAttribute('data-' + key, attrs[key]);
   });
 
-  return new Promise(function (resolve, reject) {
+  scriptLoadPromise = new Promise(function (resolve, reject) {
     script.addEventListener('load', function () {
       resolve(script);
     });
@@ -37,4 +39,14 @@ module.exports = function loadScript(options) {
     });
     container.appendChild(script);
   });
+
+  scriptPromiseCache[stringifiedOptions] = scriptLoadPromise;
+
+  return scriptLoadPromise;
+}
+
+loadScript.clearCache = function () {
+  scriptPromiseCache = {};
 };
+
+module.exports = loadScript;
