@@ -23,6 +23,10 @@ function loadScript(options) {
   script.id = options.id;
   script.async = true;
 
+  if (options.crossorigin) {
+    script.crossorigin = options.crossorigin;
+  }
+
   Object.keys(attrs).forEach(function (key) {
     script.setAttribute('data-' + key, attrs[key]);
   });

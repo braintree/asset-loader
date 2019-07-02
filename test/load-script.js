@@ -108,6 +108,16 @@ describe('loadScript', function () {
     }.bind(this));
   });
 
+  it('can pass crossorigin attribute', function () {
+    this.options.crossorigin = 'anonymous';
+
+    return loadScript(this.options).then(function () {
+      var scriptTag = this.fakeContainer.appendChild.firstCall.args[0];
+
+      expect(scriptTag.crossorigin).to.equal('anonymous');
+    }.bind(this));
+  });
+
   it('passes additional data-attributes', function () {
     this.options.dataAttributes = {
       'log-level': 'warn',
