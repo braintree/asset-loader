@@ -1,3 +1,7 @@
+# 0.3.1
+
+* Fix issue where crossorigin would not be set
+
 # 0.3.0
 
 * Add ability to set crossorigin attribute

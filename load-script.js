@@ -24,7 +24,7 @@ function loadScript(options) {
   script.async = true;
 
   if (options.crossorigin) {
-    script.crossorigin = options.crossorigin;
+    script.setAttribute('crossorigin', options.crossorigin);
   }
 
   Object.keys(attrs).forEach(function (key) {

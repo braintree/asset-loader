@@ -114,7 +114,7 @@ describe('loadScript', function () {
     return loadScript(this.options).then(function () {
       var scriptTag = this.fakeContainer.appendChild.firstCall.args[0];
 
-      expect(scriptTag.crossorigin).to.equal('anonymous');
+      expect(scriptTag.setAttribute).to.be.calledWith('crossorigin', 'anonymous');
     }.bind(this));
   });
 
