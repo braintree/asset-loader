@@ -15,6 +15,7 @@ loadScript({
   src: 'https://example.com/some-js-file.js',
   container: domNodeToAddScriptTagTo, // optional, defaults to document.head
   id: 'id-to-give-script-tag', // optional
+  crossorigin: 'anonymous', // optional
   dataAttribtues: { // optional
     foo: 'value' // adds data-foo="value" to script tag
   },

@@ -1,4 +1,4 @@
-# unreleased
+# 0.3.0
 
 * Add ability to set crossorigin attribute
 
