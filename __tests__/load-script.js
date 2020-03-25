@@ -1,4 +1,3 @@
-const Promise = require('../lib/promise');
 const loadScript = require('../load-script');
 
 describe('loadScript', function () {
