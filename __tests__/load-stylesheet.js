@@ -11,10 +11,6 @@ describe('loadStylesheet', () => {
     jest.spyOn(document, 'querySelector').mockReturnValue(null);
   });
 
-  afterEach(function () {
-    jest.clearAllMocks();
-  });
-
   it('returns a promise that resolves a stylesheet element', () => {
     return loadStylesheet({
       id: 'stylesheet-id',
@@ -62,7 +58,7 @@ describe('loadStylesheet', () => {
   it('inserts it before the head firstChild', () => {
     let stylesheet;
 
-    fakeHead.firstChild = 'some domnode';
+    fakeHead.firstChild = 'some dom node';
 
     loadStylesheet({
       id: 'stylesheet-id-1',
@@ -74,7 +70,7 @@ describe('loadStylesheet', () => {
 
     expect(fakeHead.appendChild).not.toBeCalled();
     expect(fakeHead.insertBefore).toBeCalledTimes(1);
-    expect(fakeHead.insertBefore).toBeCalledWith(stylesheet, 'some domnode');
+    expect(fakeHead.insertBefore).toBeCalledWith(stylesheet, 'some dom node');
   });
 
   it('appends child to head if no firstChild exists', () => {

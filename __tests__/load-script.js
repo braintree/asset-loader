@@ -1,5 +1,7 @@
 const loadScript = require('../load-script');
 
+function noop() {}
+
 describe('loadScript', () => {
   let testContext;
 
@@ -25,7 +27,6 @@ describe('loadScript', () => {
   });
 
   afterEach(() => {
-    jest.clearAllMocks();
     loadScript.clearCache();
   });
 
@@ -88,7 +89,7 @@ describe('loadScript', () => {
 
   it('rejects when script has errored', () => {
     testContext.fakeScriptTag.addEventListener.mockReset();
-    testContext.fakeScriptTag.addEventListener.mockImplementationOnce();
+    testContext.fakeScriptTag.addEventListener.mockImplementationOnce(noop);
     testContext.fakeScriptTag.addEventListener.mockImplementationOnce((name, cb) => {
       cb();
     });
@@ -98,8 +99,8 @@ describe('loadScript', () => {
 
   it('rejects when script has aborted', () => {
     testContext.fakeScriptTag.addEventListener.mockReset();
-    testContext.fakeScriptTag.addEventListener.mockImplementationOnce();
-    testContext.fakeScriptTag.addEventListener.mockImplementationOnce();
+    testContext.fakeScriptTag.addEventListener.mockImplementationOnce(noop);
+    testContext.fakeScriptTag.addEventListener.mockImplementationOnce(noop);
     testContext.fakeScriptTag.addEventListener.mockImplementationOnce((name, cb) => {
       cb();
     });
