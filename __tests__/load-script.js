@@ -1,9 +1,9 @@
 const loadScript = require('../load-script');
 
-describe('loadScript', function () {
+describe('loadScript', () => {
   let testContext;
 
-  beforeEach(function () {
+  beforeEach(() => {
     testContext = {};
 
     testContext.fakeContainer = {
@@ -24,36 +24,36 @@ describe('loadScript', function () {
     jest.spyOn(document, 'createElement').mockReturnValue(testContext.fakeScriptTag);
   });
 
-  afterEach(function () {
+  afterEach(() => {
     jest.clearAllMocks();
     loadScript.clearCache();
   });
 
-  it('returns a promise that resolves when script has loaded', function () {
+  it('returns a promise that resolves when script has loaded', () => {
     const promise = loadScript(testContext.options);
 
     expect(promise).toBeInstanceOf(Promise);
 
-    return promise.then(function (script) {
+    return promise.then(script => {
       expect(script).toBe(testContext.fakeScriptTag);
       expect(testContext.fakeScriptTag.addEventListener).toBeCalledTimes(3);
     });
   });
 
-  it('resolves with the script if a script with the same options has already been loaded', function () {
+  it('resolves with the script if a script with the same options has already been loaded', () => {
     const options = testContext.options;
 
-    return loadScript(options).then(function () {
+    return loadScript(options).then(() => {
       document.createElement.mockClear();
 
       return loadScript(options);
-    }).then(function (script) {
+    }).then(script => {
       expect(script).toBe(testContext.fakeScriptTag);
       expect(document.createElement).not.toBeCalled();
     });
   });
 
-  it('adds new script to page if options differ on second load', function () {
+  it('adds new script to page if options differ on second load', () => {
     const options = testContext.options;
     const newFakeScript = {
       addEventListener: jest.fn().mockImplementationOnce((name, cb) => {
@@ -62,7 +62,7 @@ describe('loadScript', function () {
       setAttribute: jest.fn()
     };
 
-    return loadScript(options).then(function () {
+    return loadScript(options).then(() => {
       document.createElement.mockReturnValue(newFakeScript);
       options.dataAttributes = {
         'log-level': 'warn',
@@ -70,23 +70,23 @@ describe('loadScript', function () {
       };
 
       return loadScript(options);
-    }).then(function (script) {
+    }).then(script => {
       expect(script).toBe(newFakeScript);
       expect(document.createElement).toBeCalledTimes(2);
     });
   });
 
-  it('can force a script reload', function () {
+  it('can force a script reload', () => {
     jest.spyOn(document, 'querySelector').mockReturnValue({});
     testContext.options.forceScriptReload = true;
 
-    return loadScript(testContext.options).then(function (script) {
+    return loadScript(testContext.options).then(script => {
       expect(script).toBe(testContext.fakeScriptTag);
       expect(document.createElement).toBeCalledTimes(1);
     });
   });
 
-  it('rejects when script has errored', function () {
+  it('rejects when script has errored', () => {
     testContext.fakeScriptTag.addEventListener.mockReset();
     testContext.fakeScriptTag.addEventListener.mockImplementationOnce();
     testContext.fakeScriptTag.addEventListener.mockImplementationOnce((name, cb) => {
@@ -96,7 +96,7 @@ describe('loadScript', function () {
     return expect(loadScript(testContext.options)).rejects.toThrow('script-src failed to load.');
   });
 
-  it('rejects when script has aborted', function () {
+  it('rejects when script has aborted', () => {
     testContext.fakeScriptTag.addEventListener.mockReset();
     testContext.fakeScriptTag.addEventListener.mockImplementationOnce();
     testContext.fakeScriptTag.addEventListener.mockImplementationOnce();
@@ -107,8 +107,8 @@ describe('loadScript', function () {
     return expect(loadScript(testContext.options)).rejects.toThrow('script-src has aborted.');
   });
 
-  it('appends a configured script tag to provided container', function () {
-    return loadScript(testContext.options).then(function () {
+  it('appends a configured script tag to provided container', () => {
+    return loadScript(testContext.options).then(() => {
       const scriptTag = testContext.fakeContainer.appendChild.mock.calls[0][0];
 
       expect(scriptTag).toBe(testContext.fakeScriptTag);
@@ -121,23 +121,23 @@ describe('loadScript', function () {
     });
   });
 
-  it('can pass crossorigin attribute', function () {
+  it('can pass crossorigin attribute', () => {
     testContext.options.crossorigin = 'anonymous';
 
-    return loadScript(testContext.options).then(function () {
+    return loadScript(testContext.options).then(() => {
       const scriptTag = testContext.fakeContainer.appendChild.mock.calls[0][0];
 
       expect(scriptTag.setAttribute).toBeCalledWith('crossorigin', 'anonymous');
     });
   });
 
-  it('passes additional data-attributes', function () {
+  it('passes additional data-attributes', () => {
     testContext.options.dataAttributes = {
       'log-level': 'warn',
       foo: 'bar'
     };
 
-    return loadScript(testContext.options).then(function () {
+    return loadScript(testContext.options).then(() => {
       expect(testContext.fakeScriptTag.setAttribute).toBeCalledTimes(2);
       expect(testContext.fakeScriptTag.setAttribute).toBeCalledWith('data-log-level', 'warn');
       expect(testContext.fakeScriptTag.setAttribute).toBeCalledWith('data-foo', 'bar');
