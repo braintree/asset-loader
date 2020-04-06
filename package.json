@@ -3,6 +3,7 @@
   "version": "0.3.1",
   "description": "A module to load frontend assets.",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "files": [
     "index.js",
     "load-script.js",
@@ -12,7 +13,7 @@
   "scripts": {
     "prepublishOnly": "npm run build",
     "prebuild": "prettier --write .",
-    "build": "tsc",
+    "build": "tsc --declaration",
     "lint": "eslint --ext js,ts .",
     "posttest": "npm run lint",
     "test": "jest"
