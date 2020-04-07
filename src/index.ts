@@ -1,7 +1,2 @@
-import loadScript from "./load-script";
-import loadStylesheet from "./load-stylesheet";
-
-export = {
-  loadScript: loadScript,
-  loadStylesheet: loadStylesheet,
-};
+export { default as loadScript } from "./load-script";
+export { default as loadStylesheet } from "./load-stylesheet";

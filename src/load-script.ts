@@ -1,6 +1,15 @@
 import Promise from "./lib/promise";
 let scriptPromiseCache = {};
 
+type LoadScriptOptions = {
+  container?: HTMLElement;
+  crossorigin?: boolean;
+  dataAttributes?: Record<string, string | number>;
+  forceScriptReload?: boolean;
+  src: string;
+  id?: string;
+};
+
 function loadScript(options): Promise<HTMLScriptElement> {
   let scriptLoadPromise;
   const stringifiedOptions = JSON.stringify(options);
