@@ -1,3 +1,6 @@
+# unreleased
+* Add typescript types
+
 # 0.3.1
 
 - Fix issue where crossorigin would not be set
