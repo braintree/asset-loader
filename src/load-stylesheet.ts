@@ -1,7 +1,12 @@
 import Promise from "./lib/promise";
+import { LoadStylesheetOptions } from "./types";
 
-export default function loadStylesheet(options): Promise<HTMLLinkElement> {
-  let stylesheet = document.querySelector('link[href="' + options.href + '"]');
+export default function loadStylesheet(
+  options: LoadStylesheetOptions
+): Promise<HTMLLinkElement> {
+  let stylesheet = document.querySelector(
+    `link[href="${options.href}"]`
+  ) as HTMLLinkElement;
 
   if (stylesheet) {
     return Promise.resolve(stylesheet);

@@ -1,16 +1,9 @@
 import Promise from "./lib/promise";
-let scriptPromiseCache = {};
+import { LoadScriptOptions } from "./types";
 
-type LoadScriptOptions = {
-  container?: HTMLElement;
-  crossorigin?: boolean;
-  dataAttributes?: Record<string, string | number>;
-  forceScriptReload?: boolean;
-  src: string;
-  id?: string;
-};
+let scriptPromiseCache = {} as Record<string, Promise<HTMLScriptElement>>;
 
-function loadScript(options): Promise<HTMLScriptElement> {
+function loadScript(options: LoadScriptOptions): Promise<HTMLScriptElement> {
   let scriptLoadPromise;
   const stringifiedOptions = JSON.stringify(options);
 
@@ -27,15 +20,15 @@ function loadScript(options): Promise<HTMLScriptElement> {
   const container = options.container || document.head;
 
   script.src = options.src;
-  script.id = options.id;
+  script.id = options.id || "";
   script.async = true;
 
   if (options.crossorigin) {
-    script.setAttribute("crossorigin", options.crossorigin);
+    script.setAttribute("crossorigin", `${options.crossorigin}`);
   }
 
   Object.keys(attrs).forEach(function (key) {
-    script.setAttribute("data-" + key, attrs[key]);
+    script.setAttribute(`data-${key}`, `${attrs[key]}`);
   });
 
   scriptLoadPromise = new Promise(function (resolve, reject) {
@@ -43,13 +36,13 @@ function loadScript(options): Promise<HTMLScriptElement> {
       resolve(script);
     });
     script.addEventListener("error", function () {
-      reject(new Error(options.src + " failed to load."));
+      reject(new Error(`${options.src} failed to load.`));
     });
     script.addEventListener("abort", function () {
-      reject(new Error(options.src + " has aborted."));
+      reject(new Error(`${options.src} has aborted.`));
     });
     container.appendChild(script);
-  });
+  }) as Promise<HTMLScriptElement>;
 
   scriptPromiseCache[stringifiedOptions] = scriptLoadPromise;
 

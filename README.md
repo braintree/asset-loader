@@ -16,7 +16,7 @@ loadScript({
   container: domNodeToAddScriptTagTo, // optional, defaults to document.head
   id: "id-to-give-script-tag", // optional
   crossorigin: "anonymous", // optional
-  dataAttribtues: {
+  dataAttributes: {
     // optional
     foo: "value", // adds data-foo="value" to script tag
   },

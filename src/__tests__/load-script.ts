@@ -1,4 +1,5 @@
 import loadScript from "../load-script";
+import { LoadScriptOptions } from "../types";
 
 function noop(): void {
   // noop
@@ -17,7 +18,7 @@ describe("loadScript", () => {
       id: "script-id",
       src: "script-src",
       container: testContext.fakeContainer,
-    };
+    } as LoadScriptOptions;
     testContext.fakeScriptTag = document.createElement("script");
     jest.spyOn(testContext.fakeScriptTag, "setAttribute").mockImplementation();
     jest
