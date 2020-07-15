@@ -1,4 +1,4 @@
-import loadScript from "../load-script";
+import loadScript = require("../load-script");
 import { LoadScriptOptions } from "../types";
 
 function noop(): void {

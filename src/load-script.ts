@@ -53,4 +53,4 @@ loadScript.clearCache = function (): void {
   scriptPromiseCache = {};
 };
 
-export default loadScript;
+export = loadScript;

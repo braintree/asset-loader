@@ -1,2 +1,5 @@
-export { default as loadScript } from "./load-script";
-export { default as loadStylesheet } from "./load-stylesheet";
+import loadScript = require("./load-script");
+import loadStylesheet = require("./load-stylesheet");
+
+export { loadScript };
+export { loadStylesheet };

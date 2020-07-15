@@ -1,4 +1,4 @@
-import loadStylesheet from "../load-stylesheet";
+import loadStylesheet = require("../load-stylesheet");
 
 describe("loadStylesheet", () => {
   let fakeHead;

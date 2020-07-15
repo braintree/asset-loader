@@ -1,3 +1,7 @@
+# 0.4.2
+
+- Remove use of `export default` in module
+
 # 0.4.1
 
 - Fix paths when publishing
