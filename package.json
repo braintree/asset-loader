@@ -1,6 +1,6 @@
 {
   "name": "@braintree/asset-loader",
-  "version": "0.4.2",
+  "version": "0.4.3",
   "description": "A module to load frontend assets.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
