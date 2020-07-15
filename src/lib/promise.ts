@@ -1,3 +1,5 @@
 import PromisePolyfill from "promise-polyfill";
 
-export default window.Promise || PromisePolyfill;
+const PromiseGlobal = window.Promise || PromisePolyfill;
+
+export { PromiseGlobal };

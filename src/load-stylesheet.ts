@@ -1,4 +1,4 @@
-import Promise from "./lib/promise";
+import { PromiseGlobal as Promise } from "./lib/promise";
 import { LoadStylesheetOptions } from "./types";
 
 export = function loadStylesheet(

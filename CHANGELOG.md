@@ -1,3 +1,7 @@
+# 0.4.3
+
+- Remove use of `export default` in promise lib
+
 # 0.4.2
 
 - Remove use of `export default` in module
