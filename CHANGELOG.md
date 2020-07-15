@@ -1,3 +1,7 @@
+# 0.4.1
+
+- Fix paths when publishing
+
 # 0.4.0
 
 - Add typescript types

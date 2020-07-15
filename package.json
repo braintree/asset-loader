@@ -5,10 +5,9 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": [
-    "index.js",
+    "dist",
     "load-script.js",
-    "load-stylesheet.js",
-    "lib/*.js"
+    "load-stylesheet.js"
   ],
   "scripts": {
     "prepublishOnly": "npm run build",
