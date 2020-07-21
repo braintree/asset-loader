@@ -1,3 +1,7 @@
+# 0.4.4
+
+- Fix issue where server side rendering would not work with sdk
+
 # 0.4.3
 
 - Remove use of `export default` in promise lib
