@@ -23,7 +23,7 @@ describe("loadScript", () => {
     jest.spyOn(testContext.fakeScriptTag, "setAttribute").mockImplementation();
     jest
       .spyOn(testContext.fakeScriptTag, "addEventListener")
-      .mockImplementation((name: string, cb: Function) => {
+      .mockImplementation((name: string, cb: () => void) => {
         cb();
       });
 
