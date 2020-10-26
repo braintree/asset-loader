@@ -1,3 +1,7 @@
+# unreleased
+
+- Upgrade to Typescript 4
+
 # 0.4.4
 
 - Fix issue where server side rendering would not work with sdk
