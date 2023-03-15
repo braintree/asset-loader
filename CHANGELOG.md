@@ -1,6 +1,7 @@
 # unreleased
 
 - Upgrade to Typescript 4
+- Drop depenency on `promise-polyfill`
 
 # 0.4.4
 
