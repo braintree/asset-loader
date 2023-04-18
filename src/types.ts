@@ -4,6 +4,7 @@ export type LoadScriptOptions = {
   dataAttributes?: Record<string, string | number>;
   forceScriptReload?: boolean;
   src: string;
+  type?: string;
   id?: string;
 };
 
