@@ -152,6 +152,16 @@ describe("loadScript", () => {
     });
   });
 
+  it("can pass type attribute", () => {
+    testContext.options.type = "module";
+
+    return loadScript(testContext.options).then(() => {
+      const scriptTag = testContext.fakeContainer.appendChild.mock.calls[0][0];
+
+      expect(scriptTag.setAttribute).toBeCalledWith("type", "module");
+    });
+  });
+
   it("passes additional data-attributes", () => {
     testContext.options.dataAttributes = {
       "log-level": "warn",

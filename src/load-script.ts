@@ -23,6 +23,10 @@ function loadScript(options: LoadScriptOptions): Promise<HTMLScriptElement> {
   script.id = options.id || "";
   script.async = true;
 
+  if (options.type) {
+    script.setAttribute("type", `${options.type}`);
+  }
+
   if (options.crossorigin) {
     script.setAttribute("crossorigin", `${options.crossorigin}`);
   }
