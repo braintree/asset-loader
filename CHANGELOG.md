@@ -4,6 +4,7 @@
   - Prettier to v3
   - eslint-plugin-prettier to v5
   - Typescript to v5
+  - Node to v18
 
 # 0.4.4
 
