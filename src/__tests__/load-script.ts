@@ -102,11 +102,11 @@ describe("loadScript", () => {
     testContext.fakeScriptTag.addEventListener.mockImplementationOnce(
       (name, cb) => {
         cb();
-      }
+      },
     );
 
     return expect(loadScript(testContext.options)).rejects.toThrow(
-      "script-src failed to load."
+      "script-src failed to load.",
     );
   });
 
@@ -117,11 +117,11 @@ describe("loadScript", () => {
     testContext.fakeScriptTag.addEventListener.mockImplementationOnce(
       (name, cb) => {
         cb();
-      }
+      },
     );
 
     return expect(loadScript(testContext.options)).rejects.toThrow(
-      "script-src has aborted."
+      "script-src has aborted.",
     );
   });
 
@@ -137,7 +137,7 @@ describe("loadScript", () => {
       expect(scriptTag.addEventListener).toBeCalledTimes(3);
       expect(scriptTag.addEventListener).toBeCalledWith(
         "load",
-        expect.any(Function)
+        expect.any(Function),
       );
     });
   });
@@ -172,11 +172,11 @@ describe("loadScript", () => {
       expect(testContext.fakeScriptTag.setAttribute).toBeCalledTimes(2);
       expect(testContext.fakeScriptTag.setAttribute).toBeCalledWith(
         "data-log-level",
-        "warn"
+        "warn",
       );
       expect(testContext.fakeScriptTag.setAttribute).toBeCalledWith(
         "data-foo",
-        "bar"
+        "bar",
       );
     });
   });

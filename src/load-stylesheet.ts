@@ -2,10 +2,10 @@ import { PromiseGlobal as Promise } from "./lib/promise";
 import { LoadStylesheetOptions } from "./types";
 
 export = function loadStylesheet(
-  options: LoadStylesheetOptions
+  options: LoadStylesheetOptions,
 ): Promise<HTMLLinkElement> {
   let stylesheet = document.querySelector(
-    `link[href="${options.href}"]`
+    `link[href="${options.href}"]`,
   ) as HTMLLinkElement;
 
   if (stylesheet) {
