@@ -1,7 +1,10 @@
 # 1.0.0-beta.1
 
 - BREAKING CHANGES
+
   - Update Node to v18
+  - Update exports to support ES6 syntax
+  - Migrate tests from Jest to Vitest
 
 - DevDependency Updates
   - Prettier to v3
