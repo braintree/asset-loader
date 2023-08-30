@@ -1,7 +1,8 @@
-# unreleased
+# 1.0.0-beta.1
 
-- Dependency Updates
-  - Node to v18
+- BREAKING CHANGES
+  - Update Node to v18
+
 - DevDependency Updates
   - Prettier to v3
   - eslint-plugin-prettier to v5
