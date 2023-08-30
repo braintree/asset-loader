@@ -1,7 +1,7 @@
 import { PromiseGlobal as Promise } from "./lib/promise";
 import { LoadStylesheetOptions } from "./types";
 
-export = function loadStylesheet(
+function loadStylesheet(
   options: LoadStylesheetOptions,
 ): Promise<HTMLLinkElement> {
   let stylesheet = document.querySelector(
@@ -27,4 +27,6 @@ export = function loadStylesheet(
   }
 
   return Promise.resolve(stylesheet);
-};
+}
+
+export default loadStylesheet;
