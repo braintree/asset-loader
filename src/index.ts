@@ -1,2 +1,2 @@
-export { default as loadScript } from "./load-script";
-export { default as loadStylesheet } from "./load-stylesheet";
+export { default as loadScript } from "./lib/load-script";
+export { default as loadStylesheet } from "./lib/load-stylesheet";
