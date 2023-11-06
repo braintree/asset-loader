@@ -2,17 +2,21 @@
   "name": "@braintree/asset-loader",
   "version": "1.0.0-beta.1",
   "description": "A module to load frontend assets.",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "files": [
-    "dist",
-    "load-script.js",
-    "load-stylesheet.js"
-  ],
+  "type": "module",
+  "files":["dist"],
+  "module":"./dist/index.js",
+  "main":"./dist/index.umd.cjs",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "require": "./dist/index.umd.cjs"
+    }
+  },
   "scripts": {
     "prepublishOnly": "npm run build",
     "prebuild": "prettier --write .",
     "build": "tsc --declaration",
+    "viteBuild": "vite build",
     "lint": "eslint --ext js,ts .",
     "posttest": "npm run lint",
     "test": "vitest",
@@ -39,7 +43,8 @@
     "happy-dom": "^10.11.2",
     "prettier": "^3.0.2",
     "typescript": "^5.1.6",
-    "vitest": "^0.34.3"
+    "vite": "^4.5.0",
+    "vitest": "^0.34.6"
   },
   "dependencies": {
     "promise-polyfill": "^8.3.0"
