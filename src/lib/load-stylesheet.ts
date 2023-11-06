@@ -1,5 +1,5 @@
 import { PromiseGlobal as Promise } from "./promise";
-import { LoadStylesheetOptions } from "../types";
+import { type LoadStylesheetOptions } from "../types";
 
 function loadStylesheet(
   options: LoadStylesheetOptions,
