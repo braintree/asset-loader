@@ -2,6 +2,8 @@
 
 - BREAKING CHANGES
   - Update exports to support ES6 syntax
+  - Support both `import` and `require` syntax
+  - Migrate from `tsc` to vite for compiling & build
   - Migrate tests from Jest to Vitest
 
 # 1.0.0-beta.1
