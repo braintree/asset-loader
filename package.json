@@ -3,7 +3,9 @@
   "version": "1.0.0-beta.1",
   "description": "A module to load frontend assets.",
   "type": "module",
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "module": "./dist/index.js",
   "main": "./dist/index.umd.cjs",
   "types": "./dist/index.d.ts",
@@ -16,8 +18,7 @@
   "scripts": {
     "prepublishOnly": "npm run build",
     "prebuild": "prettier --write .",
-    "build": "tsc --declaration",
-    "viteBuild": "vite build",
+    "build": "vite build",
     "lint": "eslint --ext js,ts .",
     "posttest": "npm run lint",
     "test": "vitest",

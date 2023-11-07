@@ -4,7 +4,7 @@ import dts from "vite-plugin-dts";
 
 export default defineConfig({
   build: {
-    outDir: "vite-dist",
+    outDir: "dist",
     target: "es6",
     lib: {
       entry: "src/index.ts",
