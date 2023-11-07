@@ -1,20 +1,19 @@
 {
   "compilerOptions": {
-    "strict": true,
-    "noUncheckedIndexedAccess": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "target": "ES2022",
-    "verbatimModuleSyntax": true,
     "allowJs": true,
-    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "lib": ["ES2022", "dom", "dom.iterable"],
+    "module": "ESNext",
     "moduleDetection": "force",
     "moduleResolution": "Bundler",
-    "module": "ESNext",
     "noEmit": true,
-    "lib": ["ES2022", "dom", "dom.iterable"],
-    "declaration": true,
-    "isolatedModules": true
+    "noUncheckedIndexedAccess": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "ES2022",
+    "verbatimModuleSyntax": true
   },
   "include": ["./src/**/*"],
   "exclude": ["./src/__tests__/**/*"]
