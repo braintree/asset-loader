@@ -1,4 +1,8 @@
-# 1.0.0
+# 1.0.1
+
+- Dependabot Updates
+
+# 1.0.0-beta.1
 
 - BREAKING CHANGES
   - Update Node to v18
