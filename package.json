@@ -3,9 +3,10 @@
   "version": "1.0.0-beta.1",
   "description": "A module to load frontend assets.",
   "type": "module",
-  "files":["dist"],
-  "module":"./dist/index.js",
-  "main":"./dist/index.umd.cjs",
+  "files": ["dist"],
+  "module": "./dist/index.js",
+  "main": "./dist/index.umd.cjs",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -44,6 +45,7 @@
     "prettier": "^3.0.2",
     "typescript": "^5.1.6",
     "vite": "^4.5.0",
+    "vite-plugin-dts": "^3.6.3",
     "vitest": "^0.34.6"
   },
   "dependencies": {
