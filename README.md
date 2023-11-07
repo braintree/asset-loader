@@ -10,6 +10,7 @@ npm install --save @braintree/asset-loader
 
 ```js
 import { loadScript } from "@braintree/asset-loader";
+// Or, var loadScript = require("@braintree/asset-loader).loadScript;
 
 loadScript({
   src: "https://example.com/some-js-file.js",
@@ -36,6 +37,7 @@ loadScript({
 
 ```js
 import { loadStylesheet } from "@braintree/asset-loader";
+// Or, var loadStylesheet = require("@braintree/asset-loader).loadStylesheet;
 
 loadStylesheet({
   href: "https://example.com/some-css-file.css",
