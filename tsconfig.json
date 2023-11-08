@@ -1,12 +1,20 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
     "allowJs": true,
     "esModuleInterop": true,
+    "isolatedModules": true,
+    "lib": ["ES2022", "dom", "dom.iterable"],
+    "module": "ESNext",
+    "moduleDetection": "force",
+    "moduleResolution": "Bundler",
+    "noEmit": true,
+    "noUncheckedIndexedAccess": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
     "strict": true,
-    "target": "es5",
-    "lib": ["es2015", "dom"]
+    "target": "ES2022",
+    "verbatimModuleSyntax": true
   },
   "include": ["./src/**/*"],
-  "exclude": ["**/__tests__/*"]
+  "exclude": ["./src/__tests__/**/*"]
 }

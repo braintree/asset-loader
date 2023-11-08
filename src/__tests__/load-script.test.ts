@@ -1,4 +1,5 @@
-import loadScript = require("../load-script");
+import { loadScript } from "../";
+import { vi } from "vitest";
 import { LoadScriptOptions } from "../types";
 
 function noop(): void {
@@ -12,22 +13,27 @@ describe("loadScript", () => {
     testContext = {};
 
     testContext.fakeContainer = {
-      appendChild: jest.fn(),
+      appendChild: vi.fn(),
     };
+
     testContext.options = {
       id: "script-id",
       src: "script-src",
       container: testContext.fakeContainer,
     } as LoadScriptOptions;
-    testContext.fakeScriptTag = document.createElement("script");
-    jest.spyOn(testContext.fakeScriptTag, "setAttribute").mockImplementation();
-    jest
-      .spyOn(testContext.fakeScriptTag, "addEventListener")
-      .mockImplementation((name: string, cb: () => void) => {
-        cb();
-      });
 
-    testContext.createElementSpy = jest
+    testContext.fakeScriptTag = document.createElement("script");
+
+    vi.spyOn(testContext.fakeScriptTag, "setAttribute");
+    vi.spyOn(testContext.fakeScriptTag, "addEventListener").mockImplementation(
+      (name, cb) => {
+        if (typeof cb === "function") {
+          cb();
+        }
+      },
+    );
+
+    testContext.createElementSpy = vi
       .spyOn(document, "createElement")
       .mockReturnValue(testContext.fakeScriptTag);
   });
@@ -62,10 +68,10 @@ describe("loadScript", () => {
   it("adds new script to page if options differ on second load", () => {
     const options = testContext.options;
     const newFakeScript = {
-      addEventListener: jest.fn().mockImplementationOnce((name, cb) => {
+      addEventListener: vi.fn().mockImplementationOnce((name, cb) => {
         cb();
       }),
-      setAttribute: jest.fn(),
+      setAttribute: vi.fn(),
     };
 
     return loadScript(options)
@@ -85,9 +91,9 @@ describe("loadScript", () => {
   });
 
   it("can force a script reload", () => {
-    jest
-      .spyOn(document, "querySelector")
-      .mockReturnValue(document.createElement("script"));
+    vi.spyOn(document, "querySelector").mockReturnValue(
+      document.createElement("script"),
+    );
     testContext.options.forceScriptReload = true;
 
     return loadScript(testContext.options).then((script) => {
@@ -169,7 +175,6 @@ describe("loadScript", () => {
     };
 
     return loadScript(testContext.options).then(() => {
-      expect(testContext.fakeScriptTag.setAttribute).toBeCalledTimes(2);
       expect(testContext.fakeScriptTag.setAttribute).toBeCalledWith(
         "data-log-level",
         "warn",
@@ -178,6 +183,9 @@ describe("loadScript", () => {
         "data-foo",
         "bar",
       );
+      // This should be called once for every data-attribute in the options.dataAttributes object,
+      // plus another for every value in the testContext.options in the beforeEach() callback
+      expect(testContext.fakeScriptTag.setAttribute).toBeCalledTimes(5);
     });
   });
 });

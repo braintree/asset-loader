@@ -1,6 +1,5 @@
-import assetsLoader = require("../");
-import loadScript = require("../load-script");
-import loadStylesheet = require("../load-stylesheet");
+import * as assetsLoader from "../";
+import { loadScript, loadStylesheet } from "../";
 
 describe("assetsLoader", () => {
   it("exposes loadScript function", () => {

@@ -1,14 +1,15 @@
-import loadStylesheet = require("../load-stylesheet");
+import { loadStylesheet } from "../";
+import { vi } from "vitest";
 
 describe("loadStylesheet", () => {
   let fakeHead;
 
   beforeEach(() => {
     fakeHead = {
-      insertBefore: jest.fn(),
-      appendChild: jest.fn(),
+      insertBefore: vi.fn(),
+      appendChild: vi.fn(),
     };
-    jest.spyOn(document, "querySelector").mockReturnValue(null);
+    vi.spyOn(document, "querySelector").mockReturnValue(null);
   });
 
   it("returns a promise that resolves a stylesheet element", () => {
@@ -26,7 +27,7 @@ describe("loadStylesheet", () => {
   it("returns a promise that resolves an existing stylesheet element if a link element exists on the page with the same href", () => {
     const fakeLink = document.createElement("link");
 
-    jest.spyOn(document, "querySelector").mockReturnValue(fakeLink);
+    vi.spyOn(document, "querySelector").mockReturnValue(fakeLink);
 
     return loadStylesheet({
       id: "stylesheet-id",
@@ -71,9 +72,8 @@ describe("loadStylesheet", () => {
 
   it("appends child to head if no firstChild exists", () => {
     const stylesheet = document.createElement("style");
-    jest.spyOn(stylesheet, "setAttribute").mockImplementation();
 
-    jest.spyOn(document, "createElement").mockReturnValue(stylesheet);
+    vi.spyOn(document, "createElement").mockReturnValue(stylesheet);
 
     loadStylesheet({
       id: "stylesheet-id-1",

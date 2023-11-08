@@ -1,5 +1,5 @@
-import { PromiseGlobal as Promise } from "./lib/promise";
-import { LoadScriptOptions } from "./types";
+import { PromiseGlobal as Promise } from "./promise";
+import { type LoadScriptOptions } from "../types";
 
 let scriptPromiseCache = {} as Record<string, Promise<HTMLScriptElement>>;
 
@@ -57,4 +57,4 @@ loadScript.clearCache = function (): void {
   scriptPromiseCache = {};
 };
 
-export = loadScript;
+export default loadScript;
