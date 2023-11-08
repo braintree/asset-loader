@@ -6,6 +6,10 @@
   - Migrate from `tsc` to vite for compiling & build
   - Migrate tests from Jest to Vitest
 
+# 1.0.1
+
+- Dependabot Updates
+
 # 1.0.0-beta.1
 
 - BREAKING CHANGES
