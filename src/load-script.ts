@@ -1,4 +1,3 @@
-import { PromiseGlobal as Promise } from "./lib/promise";
 import { LoadScriptOptions } from "./types";
 
 let scriptPromiseCache = {} as Record<string, Promise<HTMLScriptElement>>;

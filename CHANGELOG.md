@@ -1,3 +1,7 @@
+# Unreleased
+
+- Remove promise polyfill
+
 # 1.0.1
 
 - Dependabot Updates
