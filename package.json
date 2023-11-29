@@ -1,6 +1,6 @@
 {
   "name": "@braintree/asset-loader",
-  "version": "1.0.1",
+  "version": "2.0.0",
   "description": "A module to load frontend assets.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -41,8 +41,7 @@
     "ts-jest": "^29.1.1",
     "typescript": "^5.1.6"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "jest": {
     "testEnvironment": "jsdom",
     "clearMocks": true,
