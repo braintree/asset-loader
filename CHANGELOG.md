@@ -1,4 +1,4 @@
-# Unreleased
+# 2.0.0
 
 - Remove promise polyfill
 
@@ -9,6 +9,7 @@
 # 1.0.0-beta.1
 
 - BREAKING CHANGES
+
   - Update Node to v18
 
 - DevDependency Updates
