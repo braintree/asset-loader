@@ -1,3 +1,8 @@
+# 2.0.1
+
+- Updates braces to 3.0.3
+- Updates was to 8.17.1
+
 # 2.0.0
 
 - Remove promise polyfill
