@@ -1,3 +1,7 @@
+# 2.0.2
+
+- Updates dev dependencies
+
 # 2.0.1
 
 - Updates braces to 3.0.3
