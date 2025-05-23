@@ -30,6 +30,10 @@ function loadScript(options: LoadScriptOptions): Promise<HTMLScriptElement> {
     script.setAttribute("crossorigin", `${options.crossorigin}`);
   }
 
+  if (options.integrity) {
+    script.setAttribute("integrity", `${options.integrity}`);
+  }
+
   Object.keys(attrs).forEach(function (key) {
     script.setAttribute(`data-${key}`, `${attrs[key]}`);
   });
