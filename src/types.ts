@@ -3,6 +3,7 @@ export type LoadScriptOptions = {
   crossorigin?: boolean | string;
   dataAttributes?: Record<string, string | number>;
   forceScriptReload?: boolean;
+  integrity?: string;
   src: string;
   type?: string;
   id?: string;

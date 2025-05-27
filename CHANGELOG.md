@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## Unreleased
+
+- Add ability to set script `integrity` attribute
+
 ## 2.0.2
 
 - Updates dev dependencies

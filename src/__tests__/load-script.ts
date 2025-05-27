@@ -162,6 +162,19 @@ describe("loadScript", () => {
     });
   });
 
+  it("can pass integrity attribute", () => {
+    testContext.options.integrity = "some-integrity-hash";
+
+    return loadScript(testContext.options).then(() => {
+      const scriptTag = testContext.fakeContainer.appendChild.mock.calls[0][0];
+
+      expect(scriptTag.setAttribute).toBeCalledWith(
+        "integrity",
+        "some-integrity-hash",
+      );
+    });
+  });
+
   it("passes additional data-attributes", () => {
     testContext.options.dataAttributes = {
       "log-level": "warn",
