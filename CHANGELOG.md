@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## Unreleased
+## 2.0.3
 
 - Add ability to set script `integrity` attribute
 
