@@ -1,13 +1,12 @@
-import loadStylesheet = require("../load-stylesheet");
+import loadStylesheet from "../load-stylesheet";
 
 describe("loadStylesheet", () => {
-  let fakeHead;
+  let fakeHead: HTMLElement;
 
   beforeEach(() => {
-    fakeHead = {
-      insertBefore: jest.fn(),
-      appendChild: jest.fn(),
-    };
+    fakeHead = document.createElement("head");
+    fakeHead.insertBefore = jest.fn();
+    fakeHead.appendChild = jest.fn();
     jest.spyOn(document, "querySelector").mockReturnValue(null);
   });
 
@@ -34,19 +33,21 @@ describe("loadStylesheet", () => {
       container: fakeHead,
     }).then((link) => {
       expect(link).toBe(fakeLink);
-      expect(fakeHead.appendChild).not.toBeCalled();
-      expect(fakeHead.insertBefore).not.toBeCalled();
+      expect(fakeHead.appendChild).not.toHaveBeenCalled();
+      expect(fakeHead.insertBefore).not.toHaveBeenCalled();
     });
   });
 
   it("injects configured stylesheet", () => {
+    const spy = jest.spyOn(fakeHead, "appendChild");
+
     loadStylesheet({
       id: "stylesheet-id",
       href: "stylesheet-href",
       container: fakeHead,
     });
 
-    const stylesheet = fakeHead.appendChild.mock.calls[0][0];
+    const stylesheet = spy.mock.calls[0][0] as HTMLLinkElement;
 
     expect(stylesheet).toBeDefined();
     expect(stylesheet.id).toBe("stylesheet-id");
@@ -54,7 +55,10 @@ describe("loadStylesheet", () => {
   });
 
   it("inserts it before the head firstChild", () => {
-    fakeHead.firstChild = "some dom node";
+    const childNode = document.createElement("div");
+    fakeHead.append(childNode);
+
+    const spy = jest.spyOn(fakeHead, "insertBefore");
 
     loadStylesheet({
       id: "stylesheet-id-1",
@@ -62,11 +66,11 @@ describe("loadStylesheet", () => {
       container: fakeHead,
     });
 
-    const stylesheet = fakeHead.insertBefore.mock.calls[0][0];
+    const stylesheet = spy.mock.calls[0][0];
 
-    expect(fakeHead.appendChild).not.toBeCalled();
-    expect(fakeHead.insertBefore).toBeCalledTimes(1);
-    expect(fakeHead.insertBefore).toBeCalledWith(stylesheet, "some dom node");
+    expect(fakeHead.appendChild).not.toHaveBeenCalled();
+    expect(fakeHead.insertBefore).toHaveBeenCalledTimes(1);
+    expect(fakeHead.insertBefore).toHaveBeenCalledWith(stylesheet, childNode);
   });
 
   it("appends child to head if no firstChild exists", () => {
@@ -81,8 +85,8 @@ describe("loadStylesheet", () => {
       container: fakeHead,
     });
 
-    expect(fakeHead.insertBefore).not.toBeCalled();
-    expect(fakeHead.appendChild).toBeCalledTimes(1);
-    expect(fakeHead.appendChild).toBeCalledWith(stylesheet);
+    expect(fakeHead.insertBefore).not.toHaveBeenCalled();
+    expect(fakeHead.appendChild).toHaveBeenCalledTimes(1);
+    expect(fakeHead.appendChild).toHaveBeenCalledWith(stylesheet);
   });
 });

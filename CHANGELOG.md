@@ -1,5 +1,21 @@
 # CHANGELOG
 
+## UNRELEASED
+
+- Update dependencies
+  - @types/jest to 30.0.0
+  - @types/promise-polyfill to 6.0.6
+  - eslint to 8.57.1
+  - eslint-config-braintree to 6.0.1
+  - eslint-plugin-prettier to 5.5.4
+  - jest to 30.2.0
+  - jest-environment-jsdom to 30.2.0
+  - prettier to 3.7.4
+  - ts-jest to 29.4.6
+  - typescript to 5.9.3
+- Update Node to v24
+- Update tests, types, and jest config
+
 ## 2.0.3
 
 - Add ability to set script `integrity` attribute
@@ -24,7 +40,6 @@
 ## 1.0.0-beta.1
 
 - BREAKING CHANGES
-
   - Update Node to v18
 
 - DevDependency Updates
