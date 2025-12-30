@@ -1,12 +1,13 @@
-import loadScript = require("../load-script");
-import { LoadScriptOptions } from "../types";
+import loadScript from "../load-script";
+import type { LoadScriptOptions } from "../types";
 
 function noop(): void {
   // noop
 }
 
 describe("loadScript", () => {
-  let testContext;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let testContext: any;
 
   beforeEach(() => {
     testContext = {};
@@ -20,12 +21,12 @@ describe("loadScript", () => {
       container: testContext.fakeContainer,
     } as LoadScriptOptions;
     testContext.fakeScriptTag = document.createElement("script");
-    jest.spyOn(testContext.fakeScriptTag, "setAttribute").mockImplementation();
-    jest
-      .spyOn(testContext.fakeScriptTag, "addEventListener")
-      .mockImplementation((name: string, cb: () => void) => {
+    testContext.fakeScriptTag.setAttribute = jest.fn();
+    testContext.fakeScriptTag.addEventListener = jest.fn(
+      (name: string, cb: () => void) => {
         cb();
-      });
+      },
+    );
 
     testContext.createElementSpy = jest
       .spyOn(document, "createElement")
@@ -42,7 +43,9 @@ describe("loadScript", () => {
 
     return promise.then((script) => {
       expect(script).toBe(testContext.fakeScriptTag);
-      expect(testContext.fakeScriptTag.addEventListener).toBeCalledTimes(3);
+      expect(testContext.fakeScriptTag.addEventListener).toHaveBeenCalledTimes(
+        3,
+      );
     });
   });
 
@@ -55,14 +58,14 @@ describe("loadScript", () => {
       })
       .then((script) => {
         expect(script).toBe(testContext.fakeScriptTag);
-        expect(document.createElement).toBeCalledTimes(1);
+        expect(document.createElement).toHaveBeenCalledTimes(1);
       });
   });
 
   it("adds new script to page if options differ on second load", () => {
     const options = testContext.options;
     const newFakeScript = {
-      addEventListener: jest.fn().mockImplementationOnce((name, cb) => {
+      addEventListener: jest.fn().mockImplementationOnce((_name, cb) => {
         cb();
       }),
       setAttribute: jest.fn(),
@@ -80,7 +83,7 @@ describe("loadScript", () => {
       })
       .then((script) => {
         expect(script).toBe(newFakeScript);
-        expect(document.createElement).toBeCalledTimes(2);
+        expect(document.createElement).toHaveBeenCalledTimes(2);
       });
   });
 
@@ -92,7 +95,7 @@ describe("loadScript", () => {
 
     return loadScript(testContext.options).then((script) => {
       expect(script).toBe(testContext.fakeScriptTag);
-      expect(document.createElement).toBeCalledTimes(2);
+      expect(document.createElement).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -100,7 +103,7 @@ describe("loadScript", () => {
     testContext.fakeScriptTag.addEventListener.mockReset();
     testContext.fakeScriptTag.addEventListener.mockImplementationOnce(noop);
     testContext.fakeScriptTag.addEventListener.mockImplementationOnce(
-      (name, cb) => {
+      (_name: string, cb: () => void) => {
         cb();
       },
     );
@@ -115,7 +118,7 @@ describe("loadScript", () => {
     testContext.fakeScriptTag.addEventListener.mockImplementationOnce(noop);
     testContext.fakeScriptTag.addEventListener.mockImplementationOnce(noop);
     testContext.fakeScriptTag.addEventListener.mockImplementationOnce(
-      (name, cb) => {
+      (_name: string, cb: () => void) => {
         cb();
       },
     );
@@ -134,8 +137,8 @@ describe("loadScript", () => {
       expect(scriptTag.id).toBe("script-id");
       expect(scriptTag.src).toContain("script-src");
 
-      expect(scriptTag.addEventListener).toBeCalledTimes(3);
-      expect(scriptTag.addEventListener).toBeCalledWith(
+      expect(scriptTag.addEventListener).toHaveBeenCalledTimes(3);
+      expect(scriptTag.addEventListener).toHaveBeenCalledWith(
         "load",
         expect.any(Function),
       );
@@ -148,7 +151,10 @@ describe("loadScript", () => {
     return loadScript(testContext.options).then(() => {
       const scriptTag = testContext.fakeContainer.appendChild.mock.calls[0][0];
 
-      expect(scriptTag.setAttribute).toBeCalledWith("crossorigin", "anonymous");
+      expect(scriptTag.setAttribute).toHaveBeenCalledWith(
+        "crossorigin",
+        "anonymous",
+      );
     });
   });
 
@@ -158,7 +164,7 @@ describe("loadScript", () => {
     return loadScript(testContext.options).then(() => {
       const scriptTag = testContext.fakeContainer.appendChild.mock.calls[0][0];
 
-      expect(scriptTag.setAttribute).toBeCalledWith("type", "module");
+      expect(scriptTag.setAttribute).toHaveBeenCalledWith("type", "module");
     });
   });
 
@@ -168,7 +174,7 @@ describe("loadScript", () => {
     return loadScript(testContext.options).then(() => {
       const scriptTag = testContext.fakeContainer.appendChild.mock.calls[0][0];
 
-      expect(scriptTag.setAttribute).toBeCalledWith(
+      expect(scriptTag.setAttribute).toHaveBeenCalledWith(
         "integrity",
         "some-integrity-hash",
       );
@@ -182,12 +188,12 @@ describe("loadScript", () => {
     };
 
     return loadScript(testContext.options).then(() => {
-      expect(testContext.fakeScriptTag.setAttribute).toBeCalledTimes(2);
-      expect(testContext.fakeScriptTag.setAttribute).toBeCalledWith(
+      expect(testContext.fakeScriptTag.setAttribute).toHaveBeenCalledTimes(2);
+      expect(testContext.fakeScriptTag.setAttribute).toHaveBeenCalledWith(
         "data-log-level",
         "warn",
       );
-      expect(testContext.fakeScriptTag.setAttribute).toBeCalledWith(
+      expect(testContext.fakeScriptTag.setAttribute).toHaveBeenCalledWith(
         "data-foo",
         "bar",
       );
