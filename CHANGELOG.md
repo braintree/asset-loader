@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## UNRELEASED
+## 2.0.4
 
 - Update dependencies
   - @types/jest to 30.0.0
