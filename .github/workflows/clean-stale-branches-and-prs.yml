@@ -1,0 +1,65 @@
+name: "Stale Issues/PRs/Branches"
+
+permissions:
+  actions: write
+  contents: write # only for delete-branch option
+  issues: write
+  pull-requests: write
+
+on:
+  schedule:
+    # Runs at midnight only on wednesday
+    - cron: "0 0 * * 3"
+  workflow_dispatch:
+  push:
+    branches: stale-branches-and-prs
+
+env:
+  PR_TTS: 14
+  PR_TTC: 7
+  ISSUE_TTS: 14
+  ISSUE_TTC: 7
+  BRANCH_TTS: 21
+  BRANCH_TTC: 7
+
+jobs:
+  stale-issues-and-prs:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: "List stale issues and PRs"
+        uses: actions/stale@v10
+        with:
+          debug-only: true
+
+          operations-per-run: 500
+
+          days-before-issue-stale: ${{ env.ISSUE_TTS }}
+          days-before-issue-close: ${{ env.ISSUE_TTC }}
+          stale-issue-message: "This issue has had no activity for ${{ env.ISSUE_TTS }} days. It will be closed in ${{ env.ISSUE_TTC }} days if no activity is registered."
+          close-issue-message: "This issue has been closed automatically due to inactivity. If you want to open discussion again, please create a new issue. Thank you!"
+
+          days-before-pr-stale: ${{ env.PR_TTS }}
+          days-before-pr-close: ${{ env.PR_TTC }}
+          stale-pr-message: "This PR has had no activity for ${{ env.PR_TTS }} days. It will be closed in ${{ env.PR_TTC }} days if no activity is registered."
+          close-pr-message: "This PR has been closed automatically due to inactivity. You may reopen the pull request at any time. Thank you!"
+          exempt-pr-labels: dependencies
+
+  stale-branches:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # only for delete-branch option
+    steps:
+      - name: "List stale branches"
+        uses: fpicalausa/remove-stale-branches@7c4f2afe88a36c0f9114cd958380979b9d7323fb
+        with:
+          dry-run: true
+
+          days-before-branch-stale: ${{ env.BRANCH_TTS }}
+          days-before-branch-delete: ${{ env.BRANCH_TTC }}
+          ignore-branches-with-open-prs: true
+          exempt-branches-regex: ^(main|gh-pages|v3.x)$
+          stale-branch-message: "@{author} Your branch has had no activity in ${{ env.BRANCH_TTS }} days. It will be closed in ${{ env.BRANCH_TTC }} days if no activity is registered. nIf you want to keep this branch around, delete this comment or add new commits to this branch."
