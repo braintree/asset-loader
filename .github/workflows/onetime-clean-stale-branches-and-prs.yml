@@ -1,0 +1,92 @@
+name: "One Time Stale Issues/PR/Branches"
+
+permissions:
+  actions: write
+  contents: write # only for delete-branch option
+  issues: write
+  pull-requests: write
+
+on:
+  workflow_dispatch:
+    inputs:
+      PR_TTS:
+        description: "PR time to stale"
+        required: false
+        default: 14
+        type: number
+      PR_TTC:
+        description: "PR time to close AFTER warning"
+        required: false
+        default: 7
+        type: number
+      ISSUE_TTS:
+        description: "Issue time to stale"
+        required: false
+        default: 14
+        type: number
+      ISSUE_TTC:
+        description: "Issue time to close AFTER warning"
+        required: false
+        default: 7
+        type: number
+      BRANCH_TTS:
+        description: "Branch time to stale"
+        required: false
+        default: 21
+        type: number
+      BRANCH_TTC:
+        description: "Branch time to close AFTER warning"
+        required: false
+        default: 7
+        type: number
+
+jobs:
+  stale-issues-and-prs:
+    runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      issues: write
+      pull-requests: write
+    steps:
+      - name: "List stale issues and PRs"
+        uses: actions/stale@v10
+        with:
+          debug-only: true
+
+          operations-per-run: 500
+
+          days-before-issue-stale: ${{ inputs.ISSUE_TTS }}
+          days-before-issue-close: ${{ inputs.ISSUE_TTC }}
+          stale-issue-message:
+            "Hi! In order to better address relevant issues in our codebase, we have adopted new policies regarding stale issues.
+            This issue will be closed in ${{ inputs.ISSUE_TTC }} days if no activity is registered.
+            If you want us to address this issue, any updates will remove the stale label. Thanks!"
+          close-issue-message: "This issue has been closed automatically due to inactivity. If you want to open discussion again, please create a new issue. Thank you!"
+
+          days-before-pr-stale: ${{ inputs.PR_TTS }}
+          days-before-pr-close: ${{ inputs.PR_TTC }}
+          stale-pr-message:
+            "Hi! In order to better address new code suggestions, we have adopted new policies regarding stale PRs.
+            This PR will be closed in ${{ inputs.PR_TTC }} days if no activity is registered.
+            If you want us to review your PR, any updates (including comments) will remove the stale label. Thanks!"
+          close-pr-message: "This PR has been closed automatically due to inactivity. You may reopen the pull request at any time. Thank you!"
+          exempt-pr-labels: dependencies
+
+  stale-branches:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # only for delete-branch option
+    steps:
+      - name: "List stale branches"
+        uses: fpicalausa/remove-stale-branches@7c4f2afe88a36c0f9114cd958380979b9d7323fb
+        with:
+          dry-run: true
+
+          days-before-branch-stale: ${{ inputs.BRANCH_TTS }}
+          days-before-branch-delete: ${{ inputs.BRANCH_TTC }}
+          ignore-branches-with-open-prs: true
+          exempt-branches-regex: ^(main|gh-pages|v3.x)$
+          stale-branch-message:
+            "Hi @{author}! In order to keep an approachable codebase, we have adopted new policies regarding stale branches.
+            Your branch will be closed in ${{ inputs.BRANCH_TTC }} days if no activity is registered.
+            If you want to keep this branch around, delete this comment or add new commits to this branch. Thanks!"
