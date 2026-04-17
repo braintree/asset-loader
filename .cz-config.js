@@ -56,6 +56,7 @@ module.exports = {
     { name: "vault-manager" },
     { name: "venmo" },
     { name: "deps" },
+    { name: "dev-deps" },
     { name: "other" },
   ],
 
