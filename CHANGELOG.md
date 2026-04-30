@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## UNRELEASED
+
+- feat(deps): Add [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) to the repo
+
 ## 2.0.4
 
 - Update dependencies
@@ -77,7 +81,7 @@
 
 ## 0.2.1
 
-- Set `loadScript` to cache the promise used to load the script to eliiminate a race condition where the script could be on the page, but not ready to use
+- Set `loadScript` to cache the promise used to load the script to eliminate a race condition where the script could be on the page, but not ready to use
 
 ## 0.2.0
 
