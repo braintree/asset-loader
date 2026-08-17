@@ -1,6 +1,26 @@
-import { LoadScriptOptions } from "./types";
+import {
+  LoadScriptOptions,
+  AssetLoadError,
+  AssetLoadFailureKind,
+} from "./types";
 
 let scriptPromiseCache = {} as Record<string, Promise<HTMLScriptElement>>;
+
+function buildLoadError(
+  src: string,
+  failureKind: AssetLoadFailureKind,
+  startTime: number,
+): AssetLoadError {
+  const suffix = failureKind === "abort" ? "has aborted." : "failed to load.";
+  const error = new Error(`${src} ${suffix}`) as AssetLoadError;
+
+  error.src = src;
+  error.failureKind = failureKind;
+  error.timing = performance.now() - startTime;
+  error.onLine = navigator.onLine;
+
+  return error;
+}
 
 function loadScript(options: LoadScriptOptions): Promise<HTMLScriptElement> {
   let scriptLoadPromise;
@@ -39,14 +59,16 @@ function loadScript(options: LoadScriptOptions): Promise<HTMLScriptElement> {
   });
 
   scriptLoadPromise = new Promise(function (resolve, reject) {
+    const startTime = performance.now();
+
     script.addEventListener("load", function () {
       resolve(script);
     });
     script.addEventListener("error", function () {
-      reject(new Error(`${options.src} failed to load.`));
+      reject(buildLoadError(options.src, "error", startTime));
     });
     script.addEventListener("abort", function () {
-      reject(new Error(`${options.src} has aborted.`));
+      reject(buildLoadError(options.src, "abort", startTime));
     });
     container.appendChild(script);
   }) as Promise<HTMLScriptElement>;
