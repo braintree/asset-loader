@@ -3,3 +3,4 @@ import loadStylesheet = require("./load-stylesheet");
 
 export { loadScript };
 export { loadStylesheet };
+export type { AssetLoadError, AssetLoadFailureKind } from "./types";

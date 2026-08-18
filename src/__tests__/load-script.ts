@@ -113,6 +113,25 @@ describe("loadScript", () => {
     );
   });
 
+  it("rejects with enriched failure detail when script has errored", () => {
+    expect.assertions(4);
+
+    testContext.fakeScriptTag.addEventListener.mockReset();
+    testContext.fakeScriptTag.addEventListener.mockImplementationOnce(noop);
+    testContext.fakeScriptTag.addEventListener.mockImplementationOnce(
+      (_name: string, cb: () => void) => {
+        cb();
+      },
+    );
+
+    return loadScript(testContext.options).catch((err) => {
+      expect(err.src).toBe("script-src");
+      expect(err.failureKind).toBe("error");
+      expect(typeof err.timing).toBe("number");
+      expect(typeof err.onLine).toBe("boolean");
+    });
+  });
+
   it("rejects when script has aborted", () => {
     testContext.fakeScriptTag.addEventListener.mockReset();
     testContext.fakeScriptTag.addEventListener.mockImplementationOnce(noop);
@@ -126,6 +145,26 @@ describe("loadScript", () => {
     return expect(loadScript(testContext.options)).rejects.toThrow(
       "script-src has aborted.",
     );
+  });
+
+  it("rejects with enriched failure detail when script has aborted", () => {
+    expect.assertions(4);
+
+    testContext.fakeScriptTag.addEventListener.mockReset();
+    testContext.fakeScriptTag.addEventListener.mockImplementationOnce(noop);
+    testContext.fakeScriptTag.addEventListener.mockImplementationOnce(noop);
+    testContext.fakeScriptTag.addEventListener.mockImplementationOnce(
+      (_name: string, cb: () => void) => {
+        cb();
+      },
+    );
+
+    return loadScript(testContext.options).catch((err) => {
+      expect(err.src).toBe("script-src");
+      expect(err.failureKind).toBe("abort");
+      expect(typeof err.timing).toBe("number");
+      expect(typeof err.onLine).toBe("boolean");
+    });
   });
 
   it("appends a configured script tag to provided container", () => {

@@ -3,6 +3,8 @@
 ## UNRELEASED
 
 - feat(deps): Add [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) to the repo
+- `loadScript` now rejects with an `AssetLoadError`, which has `src` (the file the failed to load), the `failureKind` (`"error"` or `"abort"`), the `timing` in milliseconds, and `navigator.onLine`.
+- Export the `AssetLoadError` and `AssetLoadFailureKind` types from the package root.
 
 ## 2.0.4
 
