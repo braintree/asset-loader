@@ -1,0 +1,27 @@
+name: "Publish from tag"
+run-name: Publish ${{ github.repository }}@${{ inputs.ref }} to npm by @${{ github.actor }}
+
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "Tag to publish (e.g. v2.1.0)"
+        required: true
+        type: string
+      dry-run:
+        description: "npm publish --dry-run, skip the GitHub release"
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  publish:
+    uses: braintree/web-sdk-github-actions/.github/workflows/publish.yml@fdce883db243d03e7e0f3e5ef3ea0cda03ff0341 # main
+    with:
+      ref: ${{ inputs.ref }}
+      dry-run: ${{ inputs.dry-run }}
+    secrets:
+      npm-token: ${{ secrets.BRAINTREE_NPM_ACCESS_TOKEN }}
+    permissions:
+      contents: write
+      id-token: write
