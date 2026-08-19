@@ -19,7 +19,7 @@ jobs:
     uses: braintree/web-sdk-github-actions/.github/workflows/publish.yml@fdce883db243d03e7e0f3e5ef3ea0cda03ff0341 # main
     with:
       ref: ${{ inputs.ref }}
-      dry-run: ${{ inputs.dry-run }}
+      dry-run: ${{ inputs['dry-run'] }}
     secrets:
       npm-token: ${{ secrets.BRAINTREE_NPM_ACCESS_TOKEN }}
     permissions:
