@@ -15,7 +15,7 @@ on:
 
 jobs:
   publish:
-    uses: braintree/web-sdk-github-actions/.github/workflows/release-pipeline.yml@45ee569cf478259fa14e8f116136d6d6fd93f061 # main
+    uses: braintree/web-sdk-github-actions/.github/workflows/release-pipeline.yml@70a1b3f404d45ce05cab994d2fa7d84c5a9d7347 # main
     with:
       version-type: ${{ inputs.version_type }}
     secrets:
