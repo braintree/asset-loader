@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## UNRELEASED
+
+- Modify error handling for loading scripts:
+  - a later call after an `error` or `abort` starts a fresh load
+  - failed script tags are removed from the container on `error`
+- `forceScriptReload` no longer changes the cache key
+  - previously, a forced call skipped cache read, resulting in a new cache entry. this meant if the first tag failed, it was cached forever, and attempting to force reload would not reload the script
+  - now, the key removes `forceScriptReload`, so both calls use the same key, and a caller that forces a reload gets a new script load
+
 ## 2.1.0 (2026-08-19)
 
 - feat(deps): Add [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) to the repo

@@ -20,17 +20,19 @@ loadScript({
     // optional
     foo: "value", // adds data-foo="value" to script tag
   },
-  // optional, by default the module will resolve with an existing script
-  // node if a script tag with the same src exists on the page, by setting
-  // this value to `true`, it will add the script to the page even if an
-  // identical script tag already exists on the page.
+  // optional, by default a repeated call with the same options reuses the
+  // earlier load. Setting this to `true` always adds a new script tag and
+  // replaces the reused load for later calls with the same options.
   forceScriptReload: true,
 })
   .then(function (script) {
     script; // a reference to the dom node
   })
   .catch(function (err) {
-    // occurs when script fails to load or is aborted
+    // occurs when the script fails to load or is aborted. err is an
+    // AssetLoadError with `src`, `failureKind` ("error" | "abort"),
+    // `timing` and `onLine`. Calling loadScript again with the same
+    // options starts a new load.
   });
 ```
 
