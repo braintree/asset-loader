@@ -20,7 +20,12 @@ function buildLoadError(
   failureKind: AssetLoadFailureKind,
   startTime: number,
 ): AssetLoadError {
-  const suffix = failureKind === "abort" ? "has aborted." : "failed to load.";
+  const suffixes: Record<AssetLoadFailureKind, string> = {
+    abort: "has aborted.",
+    error: "failed to load.",
+    timeout: "timed out.",
+  };
+  const suffix = suffixes[failureKind];
   const error = new Error(`${src} ${suffix}`) as AssetLoadError;
 
   error.src = src;
@@ -34,7 +39,8 @@ function buildLoadError(
 function loadScript(options: LoadScriptOptions): Promise<HTMLScriptElement> {
   // forceScriptReload only controls whether the cache is read, so it must not
   // be part of the key, otherwise a forced load can never replace the entry.
-  const { forceScriptReload, ...cacheableOptions } = options;
+  // timeout is left out too, so callers share the load that started first.
+  const { forceScriptReload, timeout, ...cacheableOptions } = options;
   const stringifiedOptions = JSON.stringify(cacheableOptions);
   const existing = scriptCache[stringifiedOptions];
 
@@ -73,33 +79,58 @@ function loadScript(options: LoadScriptOptions): Promise<HTMLScriptElement> {
 
   entry.promise = new Promise(function (resolve, reject) {
     const startTime = performance.now();
+    let timedOut = false;
+    let timer: ReturnType<typeof setTimeout> | undefined;
 
     // The first event decides the outcome; later ones can't override it.
     script.addEventListener("load", function () {
+      if (timedOut) {
+        // A script can't be cancelled once inserted, so it may still finish.
+        // Fix the entry so the next call reuses it instead of adding a tag.
+        entry.state = "loaded";
+        entry.promise = Promise.resolve(script);
+
+        return;
+      }
+
       if (entry.state !== "pending") {
         return;
       }
 
+      clearTimeout(timer);
       entry.state = "loaded";
       resolve(script);
     });
+
     script.addEventListener("error", function () {
       if (entry.state !== "pending") {
         return;
       }
 
+      clearTimeout(timer);
       entry.state = "failed";
       container.removeChild(script);
       reject(buildLoadError(options.src, "error", startTime));
     });
+
     script.addEventListener("abort", function () {
       if (entry.state !== "pending") {
         return;
       }
 
+      clearTimeout(timer);
       entry.state = "failed";
       reject(buildLoadError(options.src, "abort", startTime));
     });
+
+    if (timeout) {
+      timer = setTimeout(function () {
+        timedOut = true;
+        entry.state = "failed";
+        reject(buildLoadError(options.src, "timeout", startTime));
+      }, timeout);
+    }
+
     container.appendChild(script);
   }) as Promise<HTMLScriptElement>;
 

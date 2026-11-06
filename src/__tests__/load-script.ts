@@ -432,5 +432,117 @@ describe("loadScript", () => {
       expect(firstScript).toBe(tags[0]);
       expect(secondScript).toBe(tags[0]);
     });
+
+    describe("timeout", () => {
+      beforeEach(() => {
+        jest.useFakeTimers();
+        testContext.options.timeout = 1000;
+      });
+
+      afterEach(() => {
+        jest.useRealTimers();
+      });
+
+      it("rejects with a timeout failure when the load never finishes", async () => {
+        expect.assertions(5);
+
+        const rejection = loadScript(testContext.options).catch((err) => {
+          expect(err.message).toBe("script-src timed out.");
+          expect(err.src).toBe("script-src");
+          expect(err.failureKind).toBe("timeout");
+          expect(err.timing).toBeGreaterThanOrEqual(1000);
+          expect(typeof err.onLine).toBe("boolean");
+        });
+
+        jest.advanceTimersByTime(1000);
+        await rejection;
+      });
+
+      it("does not reject before the timeout has elapsed", async () => {
+        const onSettled = jest.fn();
+
+        loadScript(testContext.options).then(onSettled, onSettled);
+        jest.advanceTimersByTime(999);
+        await Promise.resolve();
+
+        expect(onSettled).not.toHaveBeenCalled();
+
+        tags[0].fire("load");
+        await Promise.resolve();
+
+        expect(onSettled).toHaveBeenCalledWith(tags[0]);
+      });
+
+      it("does not start a timer when no timeout is given", () => {
+        delete testContext.options.timeout;
+
+        loadScript(testContext.options).catch(noop);
+
+        expect(jest.getTimerCount()).toBe(0);
+      });
+
+      it("starts a new load on the next call after a timeout", async () => {
+        const timedOut = expect(
+          loadScript(testContext.options),
+        ).rejects.toThrow("script-src timed out.");
+
+        jest.advanceTimersByTime(1000);
+        await timedOut;
+
+        const retry = loadScript(testContext.options);
+
+        expect(tags).toHaveLength(2);
+        // The first tag can't be cancelled, so it is left in place.
+        expect(testContext.fakeContainer.removeChild).not.toHaveBeenCalled();
+
+        tags[1].fire("load");
+
+        await expect(retry).resolves.toBe(tags[1]);
+      });
+
+      it("fixes the entry when the load succeeds after timing out", async () => {
+        const timedOut = expect(
+          loadScript(testContext.options),
+        ).rejects.toThrow("script-src timed out.");
+
+        jest.advanceTimersByTime(1000);
+        await timedOut;
+
+        tags[0].fire("load");
+
+        await expect(loadScript(testContext.options)).resolves.toBe(tags[0]);
+        expect(tags).toHaveLength(1);
+      });
+
+      it.each(["load", "error", "abort"])(
+        "clears the timer on %s",
+        async (eventName: string) => {
+          const settled = loadScript(testContext.options).catch(noop);
+
+          expect(jest.getTimerCount()).toBe(1);
+
+          tags[0].fire(eventName);
+          await settled;
+
+          expect(jest.getTimerCount()).toBe(0);
+        },
+      );
+
+      it("excludes timeout from the cache key and uses the first caller's value", async () => {
+        const first = loadScript(testContext.options);
+        const second = loadScript({ ...testContext.options, timeout: 60000 });
+
+        expect(second).toBe(first);
+        expect(tags).toHaveLength(1);
+
+        const rejections = Promise.all([
+          expect(first).rejects.toThrow("script-src timed out."),
+          expect(second).rejects.toThrow("script-src timed out."),
+        ]);
+
+        jest.advanceTimersByTime(1000);
+        await rejections;
+      });
+    });
   });
 });
