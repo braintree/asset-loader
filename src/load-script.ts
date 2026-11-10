@@ -4,7 +4,16 @@ import {
   AssetLoadFailureKind,
 } from "./types";
 
-let scriptPromiseCache = {} as Record<string, Promise<HTMLScriptElement>>;
+type CacheEntry = {
+  promise: Promise<HTMLScriptElement>;
+  state: "pending" | "loaded" | "failed";
+};
+
+let scriptCache = {} as Record<string, CacheEntry>;
+
+function canReuse(entry: CacheEntry, forceReload?: boolean): boolean {
+  return !forceReload && entry.state !== "failed";
+}
 
 function buildLoadError(
   src: string,
@@ -23,15 +32,14 @@ function buildLoadError(
 }
 
 function loadScript(options: LoadScriptOptions): Promise<HTMLScriptElement> {
-  let scriptLoadPromise;
-  const stringifiedOptions = JSON.stringify(options);
+  // forceScriptReload only controls whether the cache is read, so it must not
+  // be part of the key, otherwise a forced load can never replace the entry.
+  const { forceScriptReload, ...cacheableOptions } = options;
+  const stringifiedOptions = JSON.stringify(cacheableOptions);
+  const existing = scriptCache[stringifiedOptions];
 
-  if (!options.forceScriptReload) {
-    scriptLoadPromise = scriptPromiseCache[stringifiedOptions];
-
-    if (scriptLoadPromise) {
-      return scriptLoadPromise;
-    }
+  if (existing && canReuse(existing, forceScriptReload)) {
+    return existing.promise;
   }
 
   const script = document.createElement("script");
@@ -58,28 +66,50 @@ function loadScript(options: LoadScriptOptions): Promise<HTMLScriptElement> {
     script.setAttribute(`data-${key}`, `${attrs[key]}`);
   });
 
-  scriptLoadPromise = new Promise(function (resolve, reject) {
+  // Handlers only update their own entry and never touch the cache, so a
+  // forced reload replacing the cached entry can't be undone by an old load.
+  // State is set before settling so callers retrying from a catch see it.
+  const entry = { state: "pending" } as CacheEntry;
+
+  entry.promise = new Promise(function (resolve, reject) {
     const startTime = performance.now();
 
+    // The first event decides the outcome; later ones can't override it.
     script.addEventListener("load", function () {
+      if (entry.state !== "pending") {
+        return;
+      }
+
+      entry.state = "loaded";
       resolve(script);
     });
     script.addEventListener("error", function () {
+      if (entry.state !== "pending") {
+        return;
+      }
+
+      entry.state = "failed";
+      container.removeChild(script);
       reject(buildLoadError(options.src, "error", startTime));
     });
     script.addEventListener("abort", function () {
+      if (entry.state !== "pending") {
+        return;
+      }
+
+      entry.state = "failed";
       reject(buildLoadError(options.src, "abort", startTime));
     });
     container.appendChild(script);
   }) as Promise<HTMLScriptElement>;
 
-  scriptPromiseCache[stringifiedOptions] = scriptLoadPromise;
+  scriptCache[stringifiedOptions] = entry;
 
-  return scriptLoadPromise;
+  return entry.promise;
 }
 
 loadScript.clearCache = function (): void {
-  scriptPromiseCache = {};
+  scriptCache = {};
 };
 
 export = loadScript;

@@ -14,6 +14,7 @@ describe("loadScript", () => {
 
     testContext.fakeContainer = {
       appendChild: jest.fn(),
+      removeChild: jest.fn(),
     };
     testContext.options = {
       id: "script-id",
@@ -236,6 +237,200 @@ describe("loadScript", () => {
         "data-foo",
         "bar",
       );
+    });
+  });
+
+  describe("failure cleanup and caching", () => {
+    type Listener = () => void;
+    type ControlledTag = {
+      setAttribute: jest.Mock;
+      addEventListener: jest.Mock;
+      fire: (name: string) => void;
+    };
+
+    // Unlike the default fake tag, listeners fire on demand rather than
+    // synchronously, which mirrors how browsers dispatch load/error events.
+    function buildControlledTag(): ControlledTag {
+      const listeners: Record<string, Listener> = {};
+
+      return {
+        setAttribute: jest.fn(),
+        addEventListener: jest.fn((name: string, cb: Listener) => {
+          listeners[name] = cb;
+        }),
+        fire: (name: string) => listeners[name](),
+      };
+    }
+
+    let tags: ControlledTag[];
+
+    beforeEach(() => {
+      tags = [];
+      testContext.createElementSpy.mockImplementation(() => {
+        const tag = buildControlledTag();
+
+        tags.push(tag);
+
+        return tag;
+      });
+    });
+
+    it("removes the script tag and clears the cache entry on error", async () => {
+      const rejection = expect(loadScript(testContext.options)).rejects.toThrow(
+        "script-src failed to load.",
+      );
+
+      tags[0].fire("error");
+      await rejection;
+
+      expect(testContext.fakeContainer.removeChild).toHaveBeenCalledTimes(1);
+      expect(testContext.fakeContainer.removeChild).toHaveBeenCalledWith(
+        tags[0],
+      );
+
+      loadScript(testContext.options).catch(noop);
+
+      expect(tags).toHaveLength(2);
+    });
+
+    it("lets a later call with the same options create a new tag and succeed", async () => {
+      const failed = expect(loadScript(testContext.options)).rejects.toThrow();
+
+      tags[0].fire("error");
+      await failed;
+
+      const retry = loadScript(testContext.options);
+
+      expect(tags).toHaveLength(2);
+      expect(testContext.fakeContainer.appendChild).toHaveBeenLastCalledWith(
+        tags[1],
+      );
+
+      tags[1].fire("load");
+
+      await expect(retry).resolves.toBe(tags[1]);
+    });
+
+    it("starts a new load after an abort instead of reusing the rejected entry", async () => {
+      const aborted = expect(loadScript(testContext.options)).rejects.toThrow(
+        "script-src has aborted.",
+      );
+
+      tags[0].fire("abort");
+      await aborted;
+
+      const retry = loadScript(testContext.options);
+
+      expect(tags).toHaveLength(2);
+
+      tags[1].fire("load");
+
+      await expect(retry).resolves.toBe(tags[1]);
+    });
+
+    it("can retry from inside a catch handler", async () => {
+      const retried = loadScript(testContext.options).catch(() =>
+        loadScript(testContext.options),
+      );
+
+      tags[0].fire("error");
+      await Promise.resolve();
+      await Promise.resolve();
+
+      expect(tags).toHaveLength(2);
+
+      tags[1].fire("load");
+
+      await expect(retried).resolves.toBe(tags[1]);
+    });
+
+    it("lets a forced reload replace a rejected entry", async () => {
+      const aborted = expect(loadScript(testContext.options)).rejects.toThrow();
+
+      tags[0].fire("abort");
+      await aborted;
+
+      const forced = loadScript({
+        ...testContext.options,
+        forceScriptReload: true,
+      });
+
+      expect(tags).toHaveLength(2);
+
+      tags[1].fire("load");
+      await forced;
+
+      expect(loadScript(testContext.options)).toBe(forced);
+      expect(tags).toHaveLength(2);
+    });
+
+    it("ignores events that arrive after the load has settled", async () => {
+      const first = loadScript(testContext.options);
+
+      tags[0].fire("load");
+      await first;
+      tags[0].fire("error");
+
+      expect(testContext.fakeContainer.removeChild).not.toHaveBeenCalled();
+      expect(loadScript(testContext.options)).toBe(first);
+      expect(tags).toHaveLength(1);
+    });
+
+    it("keeps a newer cache entry when an older load fails", async () => {
+      const oldLoad = expect(loadScript(testContext.options)).rejects.toThrow();
+      const forcedLoad = loadScript({
+        ...testContext.options,
+        forceScriptReload: true,
+      });
+
+      tags[0].fire("error");
+      await oldLoad;
+
+      // The failed load must not evict the entry that replaced it.
+      expect(loadScript(testContext.options)).toBe(forcedLoad);
+      expect(tags).toHaveLength(2);
+
+      tags[1].fire("load");
+
+      await expect(forcedLoad).resolves.toBe(tags[1]);
+    });
+
+    it("excludes forceScriptReload from the cache key", async () => {
+      const first = loadScript(testContext.options);
+
+      tags[0].fire("load");
+      await first;
+
+      const forced = loadScript({
+        ...testContext.options,
+        forceScriptReload: true,
+      });
+
+      expect(forced).not.toBe(first);
+      expect(tags).toHaveLength(2);
+
+      tags[1].fire("load");
+      await forced;
+
+      // A forced load replaces the cached entry for the same options.
+      expect(loadScript(testContext.options)).toBe(forced);
+      expect(tags).toHaveLength(2);
+    });
+
+    it("shares one in-flight promise between concurrent callers", async () => {
+      const first = loadScript(testContext.options);
+      const second = loadScript(testContext.options);
+
+      expect(second).toBe(first);
+      expect(tags).toHaveLength(1);
+      expect(testContext.fakeContainer.appendChild).toHaveBeenCalledTimes(1);
+
+      tags[0].fire("load");
+
+      const [firstScript, secondScript] = await Promise.all([first, second]);
+
+      expect(firstScript).toBe(tags[0]);
+      expect(secondScript).toBe(tags[0]);
     });
   });
 });
