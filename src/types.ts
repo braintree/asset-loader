@@ -5,11 +5,12 @@ export type LoadScriptOptions = {
   forceScriptReload?: boolean;
   integrity?: string;
   src: string;
+  timeout?: number;
   type?: string;
   id?: string;
 };
 
-export type AssetLoadFailureKind = "error" | "abort";
+export type AssetLoadFailureKind = "error" | "abort" | "timeout";
 
 export type AssetLoadError = Error & {
   src: string;

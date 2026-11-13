@@ -8,6 +8,10 @@
 - `forceScriptReload` no longer changes the cache key
   - previously, a forced call skipped cache read, resulting in a new cache entry. this meant if the first tag failed, it was cached forever, and attempting to force reload would not reload the script
   - now, the key removes `forceScriptReload`, so both calls use the same key, and a caller that forces a reload gets a new script load
+- Add an optional `timeout` option (milliseconds) to `loadScript` for loads that never finish
+  - when it expires, the promise rejects with an `AssetLoadError` whose `failureKind` is `"timeout"`, and the next call with the same options starts a new load
+  - `AssetLoadFailureKind` now includes `"timeout"`, so TypeScript code that switches over every value needs a new case
+  - a timed-out tag can't be cancelled and stays on the page, so a retry after a slow load may run the script twice
 
 ## 2.1.0 (2026-08-19)
 

@@ -24,15 +24,20 @@ loadScript({
   // earlier load. Setting this to `true` always adds a new script tag and
   // replaces the reused load for later calls with the same options.
   forceScriptReload: true,
+  // optional, milliseconds to wait before giving up on a load that never
+  // finishes. There is no timeout by default. The script tag can't be
+  // cancelled, so a retry after a slow load may run the script twice.
+  timeout: 60000,
 })
   .then(function (script) {
     script; // a reference to the dom node
   })
   .catch(function (err) {
-    // occurs when the script fails to load or is aborted. err is an
-    // AssetLoadError with `src`, `failureKind` ("error" | "abort"),
-    // `timing` and `onLine`. Calling loadScript again with the same
-    // options starts a new load.
+    // occurs when the script fails to load, is aborted or times out.
+    // err is an AssetLoadError with `src`, `failureKind` ("error", "abort"
+    // or "timeout"), `timing` (ms until failure) and `onLine`
+    // (navigator.onLine at failure). Calling loadScript again with the
+    // same options starts a new load.
   });
 ```
 
