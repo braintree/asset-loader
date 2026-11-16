@@ -1,6 +1,6 @@
 # CHANGELOG
 
-## UNRELEASED
+## 2.2.0
 
 - Modify error handling for loading scripts:
   - a later call after an `error` or `abort` starts a fresh load
