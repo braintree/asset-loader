@@ -22,6 +22,8 @@ function buildLoadError(
 ): AssetLoadError {
   const suffixes: Record<AssetLoadFailureKind, string> = {
     abort: "has aborted.",
+    detached:
+      "cannot be loaded because its container is detached from the document.",
     error: "failed to load.",
     timeout: "timed out.",
   };
@@ -36,7 +38,20 @@ function buildLoadError(
   return error;
 }
 
+// Node.isConnected isn't available in every supported browser.
+function isAttached(container: HTMLElement): boolean {
+  return document.documentElement.contains(container);
+}
+
 function loadScript(options: LoadScriptOptions): Promise<HTMLScriptElement> {
+  const container = options.container || document.head;
+
+  if (!isAttached(container)) {
+    return Promise.reject(
+      buildLoadError(options.src, "detached", performance.now()),
+    );
+  }
+
   // forceScriptReload only controls whether the cache is read, so it must not
   // be part of the key, otherwise a forced load can never replace the entry.
   // timeout is left out too, so callers share the load that started first.
@@ -50,7 +65,6 @@ function loadScript(options: LoadScriptOptions): Promise<HTMLScriptElement> {
 
   const script = document.createElement("script");
   const attrs = options.dataAttributes || {};
-  const container = options.container || document.head;
 
   script.src = options.src;
   script.id = options.id || "";

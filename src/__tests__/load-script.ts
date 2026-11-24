@@ -12,10 +12,10 @@ describe("loadScript", () => {
   beforeEach(() => {
     testContext = {};
 
-    testContext.fakeContainer = {
-      appendChild: jest.fn(),
-      removeChild: jest.fn(),
-    };
+    testContext.fakeContainer = document.createElement("div");
+    testContext.fakeContainer.appendChild = jest.fn();
+    testContext.fakeContainer.removeChild = jest.fn();
+    document.body.appendChild(testContext.fakeContainer);
     testContext.options = {
       id: "script-id",
       src: "script-src",
@@ -37,6 +37,27 @@ describe("loadScript", () => {
   afterEach(() => {
     loadScript.clearCache();
     testContext.createElementSpy.mockRestore();
+    testContext.fakeContainer.remove();
+  });
+
+  it("rejects immediately without creating or caching a script when the container is detached", async () => {
+    const container = document.createElement("div");
+    container.appendChild = jest.fn();
+    const options = { ...testContext.options, container };
+
+    testContext.createElementSpy.mockClear();
+
+    await expect(loadScript(options)).rejects.toMatchObject({
+      failureKind: "detached",
+      src: "script-src",
+      message: expect.stringContaining("container is detached"),
+    });
+    expect(testContext.createElementSpy).not.toHaveBeenCalled();
+    expect(container.appendChild).not.toHaveBeenCalled();
+
+    document.body.appendChild(container);
+    await expect(loadScript(options)).resolves.toBe(testContext.fakeScriptTag);
+    container.remove();
   });
 
   it("returns a promise that resolves when script has loaded", () => {
