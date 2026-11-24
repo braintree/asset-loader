@@ -10,7 +10,7 @@ export type LoadScriptOptions = {
   id?: string;
 };
 
-export type AssetLoadFailureKind = "error" | "abort" | "timeout";
+export type AssetLoadFailureKind = "error" | "abort" | "timeout" | "detached";
 
 export type AssetLoadError = Error & {
   src: string;

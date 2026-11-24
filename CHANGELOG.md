@@ -1,5 +1,12 @@
 # CHANGELOG
 
+## UNRELEASED
+
+### Added
+
+- `loadScript` now rejects immediately if the container is not connected to the document
+  - `AssetLoadFailureKind` now includes `"detached"`
+
 ## 2.2.0
 
 - Modify error handling for loading scripts:
